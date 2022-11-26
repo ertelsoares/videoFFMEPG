@@ -31,8 +31,8 @@ app.post('/convert',(request ,response) => {
             console.log("convertion sucess");
 
         });
-
         // Apagar arquivo mp4
+        removeFile(`${__dirname} + /tmp/${file.filename}`);
     }).on("error" , (error) =>{
         console.log(error);
         //Apagar arquivo mp4
