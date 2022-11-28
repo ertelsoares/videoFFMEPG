@@ -4,13 +4,13 @@
   "description": "usado para aula de sistemas e multimidias",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "14.x"
+    "node": "18.x"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
