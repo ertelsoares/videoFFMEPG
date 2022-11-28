@@ -1,5 +1,5 @@
 {
-  "name": "video-ftmpeg",
+  "name": "node-js-getting-started",
   "version": "1.0.0",
   "description": "usado para aula de sistemas e multimidias",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "10.x"
+    "node": "14.x"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
