@@ -29,13 +29,13 @@ app.post('/convert',(request ,response) => {
         return response.download(__dirname + fileName, (error) =>{
             if (error) throw  error;
             console.log("convertion sucess");
-
+            removeFile(`./tmp/${file.filename}`);
         });
         // Apagar arquivo mp4
-        removeFile(`${__dirname} + /tmp/${file.filename}`);
+
     }).on("error" , (error) =>{
         console.log(error);
-        //Apagar arquivo mp4
+        removeFile(`./tmp/${file.filename}`);
     }).saveToFile(__dirname + fileName)
 
 });
