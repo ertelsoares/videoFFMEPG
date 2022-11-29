@@ -1,50 +1,72 @@
 const express = require("express");
+
 const multer = require("multer");
+
+const {exec} = require("child_process");
+const path = require('path');
 const fs = require("fs");
 const ffmepg = require("fluent-ffmpeg");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 
-ffmepg.setFfmpegPath(ffmpegPath);
 
-const PORT = process.env.Port || 5000;
 const app =  express();
 
-const storage = multer.diskStorage({
-    destination: (request,file,callback) =>{
-        callback(null, './tmp');
-    },
-    filename:(request,file,callback) =>{
-         callback(null, Date.now() + '-' + file.originalname);
-    },
-});
-console.log(ffmepg);
-app.use(multer({storage}).single("file"));
-app.post('/convert',(request ,response) => {
-    const file = request.file;
-    const fileName = ' output.mp3';
 
-    ffmepg('tmp/' + file.filename).toFormat('mp3').
-    on("end",() =>{
-        //Fazer download do arquivo mp3
-        return response.download(__dirname + fileName, (error) =>{
-            if (error) throw  error;
-            console.log("convertion sucess");
-            removeFile(`./tmp/${file.filename}`);
-        });
-        // Apagar arquivo mp4
+app.use(express.static('public'));
 
-    }).on("error" , (error) =>{
-        console.log(error);
-        removeFile(`./tmp/${file.filename}`);
-    }).saveToFile(__dirname + fileName)
 
-});
+var dir = 'public';
 
-function removeFile(directory){
-  fs.unlink(directory,(error) =>{
-      if (error) throw  error;
-      console.log("File deleted");
-  })
+var subDirectory = 'public/uploads';
+
+if(!fs.existsSync(dir)){
+    fs.mkdirSync(dir)
+
+    fs.mkdirSync(subDirectory)
 }
 
-app.listen(PORT);
+
+var storage = multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,'public/uploads')
+    },
+    filename:function(req,file,cb){
+        cb(null,file.fieldname + '-' + Date.now()+ path.extname(file.originalname))
+    }
+})
+
+
+var upload = multer({storage:storage})
+
+const PORT = process.env.Port || 3000;
+
+app.get('/',(req,res)=>{
+    res.sendFile(__dirname + "/home.html")
+})
+
+app.post('/convert',upload.single('file'),(req,res)=>{
+      if(req.file){
+        console.log(req.file.path)
+ 
+
+        var output =  Date.now() + 'output.mp3';
+
+        exec(`ffmpeg -i ${req.file.path} ${output}`,(error,stdout,stderr)=>{
+            if(error){
+                console.log(`error: ${error.message}`);
+            }else{
+                console.log('Arquivo convertido');
+                res.download(output,(err) =>{
+                    if (err) throw err
+
+                    fs.unlinkSync(req.file.path)
+                    fs.unlinkSync(output)
+                })
+            }
+        })
+      }
+})
+
+app.listen(PORT,()=> {
+    console.log(`App is listening on ${PORT}`)
+})
