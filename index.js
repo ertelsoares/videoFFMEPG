@@ -44,7 +44,7 @@ app.get('/',(req,res)=>{
     res.sendFile(__dirname + "/home.html")
 })
 
-app.post('/convert',upload.single('file'),(req,res)=>{
+app.post('https://videocodec.herokuapp.com/convert',upload.single('file'),(req,res)=>{
       if(req.file && req.body.ext){
         console.log(req.file.path)
         var extensao = req.body.ext;
@@ -59,37 +59,20 @@ app.post('/convert',upload.single('file'),(req,res)=>{
             if(error){
                 console.log(`error: ${error.message}`);
             }else{
-                console.log('Arquivo convertido ');
-                //converte2(output,extensao,2)
                 
-                res.download(output,(err) =>{
-                        console.log("foi")
-                        
-                        
-                });
-                ffmpeg.ffprobe(req, function(err, data) {
-                    document.dir(data.streams);
-                });
-                ffmpeg.ffprobe(output, function(err, data) {
-                    document.dir(data.streams);
-                });
+                    console.log('Arquivo convertido');
+                    res.download(output,(err) =>{
+                        if (err) throw err
+    
+                        fs.unlinkSync(req.file.path)
+                        fs.unlinkSync(output)
+                    })
+            
               }
             })
         }
 
-        function converte2(output,extensao,num){
-                    var output2 =  Date.now() + `output${num}x.${extensao}`;
-                    exec(`ffmpeg -i ${output}  ${output2}`,(error,stdout,stderr)=>{
-                        if(error){
-                            console.log(`error: ${error.message}`);
-                        }else{
-                            console.log('Arquivo convertido2x ');
-                            fs.unlinkSync(output);
-                            return output2;
-                            
-                }
-            })
-        }
+        
       }
 })
 
