@@ -44,7 +44,7 @@ app.get('/',(req,res)=>{
     res.sendFile(__dirname + "/home.html")
 })
 
-app.post('https://videocodec.herokuapp.com/convert',upload.single('file'),(req,res)=>{
+app.post('/convert',upload.single('file'),(req,res)=>{
       if(req.file && req.body.ext){
         
         var extensao = req.body.ext;
