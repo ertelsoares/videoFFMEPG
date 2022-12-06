@@ -46,16 +46,12 @@ app.get('/',(req,res)=>{
 
 app.post('https://videocodec.herokuapp.com/convert',upload.single('file'),(req,res)=>{
       if(req.file && req.body.ext){
-        console.log(req.file.path)
+        
         var extensao = req.body.ext;
 
         var output =  Date.now() + `output.${extensao}`;
         
-        converte(req.file.path,output,extensao)
-        
-
-        function converte(req,output,extensao){
-            exec(`ffmpeg -i ${req}  ${output}`,(error,stdout,stderr)=>{
+            exec(`ffmpeg -i ${req.file.path}  ${output}`,(error,stdout,stderr)=>{
             if(error){
                 console.log(`error: ${error.message}`);
             }else{
@@ -70,7 +66,7 @@ app.post('https://videocodec.herokuapp.com/convert',upload.single('file'),(req,r
             
               }
             })
-        }
+        
 
         
       }
